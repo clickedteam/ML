@@ -1,0 +1,169 @@
+Scikit-learn: Clasificación, Agrupamiento, PCA
+April 11, 2024
+hare a few examples using scikit learn for classification, clustering, pca etc
+ChatGPT
+Here are some examples of how to use scikit-learn for common machine learning tasks such as classification, clustering, and Principal Component Analysis (PCA). Scikit-learn is a popular Python library for machine learning that provides a wide range of algorithms and tools for data preprocessing, model fitting, and evaluation.
+
+1. Classification with Logistic Regression
+For classification, we'll use logistic regression to classify instances of the Iris dataset, which is included in scikit-learn.
+
+python
+Copy code
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Load data
+data = load_iris()
+X = data.data
+y = data.target
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize and train the logistic regression model
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+# Predict the labels of the test set
+predictions = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, predictions)
+print(f'Accuracy: {accuracy}')
+2. Clustering with K-Means
+For clustering, we'll use K-means to cluster data points from a generated dataset.
+
+python
+Copy code
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Generate synthetic data
+X, _ = make_blobs(n_samples=300, centers=4, cluster_std=0.60, random_state=0)
+
+# Apply K-means clustering
+kmeans = KMeans(n_clusters=4)
+kmeans.fit(X)
+y_kmeans = kmeans.predict(X)
+
+# Plot the clusters
+plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.5)
+plt.show()
+3. Principal Component Analysis (PCA)
+PCA is used for dimensionality reduction. Here's how to apply it to the Iris dataset to reduce its dimensions.
+
+python
+Copy code
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+
+# Load and scale the data
+data = load_iris()
+X = data.data
+y = data.target
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Apply PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Convert to DataFrame for easier plotting
+pca_df = pd.DataFrame(data = X_pca, columns = ['principal component 1', 'principal component 2'])
+pca_df['target'] = y
+
+# Plotting the PCA results
+import seaborn as sns
+sns.scatterplot(x='principal component 1', y='principal component 2', hue='target', data=pca_df, palette='viridis')
+plt.title('PCA of Iris Dataset')
+plt.show()
+These examples cover basic uses of scikit-learn for classification, clustering, and PCA, and demonstrate how to apply these techniques to real-world datasets.
+
+feature scaling and regression
+ChatGPT
+Feature Scaling and Regression in Scikit-learn
+Feature scaling is a crucial step in many machine learning algorithms, particularly for those that use distance calculations or are sensitive to the magnitude of features, like linear regression with regularization. Here, I'll provide an example that demonstrates both feature scaling and linear regression, specifically using Ridge Regression, which is a form of linear regression that includes L2 regularization.
+
+Why Feature Scaling?
+Normalization/Standardization: Many machine learning algorithms perform better or converge faster when features are on a relatively similar scale and close to normally distributed.
+Impact on Regression: Gradient descent, which is often used for fitting models like linear regression, generally reaches convergence faster if features are scaled.
+Example: Linear Regression with Feature Scaling
+Let's look at how to scale features and apply linear regression on a dataset. We'll use the Boston Housing dataset provided by scikit-learn, which includes several features of houses at different locations around the suburbs of Boston.
+
+Step 1: Load the Data and Libraries
+python
+Copy code
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
+
+# Load Boston housing data
+boston = load_boston()
+X = boston.data
+y = boston.target
+Step 2: Scale the Features
+We use StandardScaler from scikit-learn to scale our features. This will normalize our feature data so that each feature has zero mean and unit variance.
+
+python
+Copy code
+# Initialize the StandardScaler
+scaler = StandardScaler()
+
+# Fit on training data and transform it
+X_scaled = scaler.fit_transform(X)
+Step 3: Split the Data into Training and Test Sets
+python
+Copy code
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+Step 4: Apply Ridge Regression
+We will use Ridge Regression because it can help reduce the model complexity and prevent overfitting which may result from simple linear regression.
+
+python
+Copy code
+# Initialize Ridge Regression model
+ridge = Ridge(alpha=1.0)  # alpha is the regularization strength
+
+# Train the model
+ridge.fit(X_train, y_train)
+
+# Predict on the test data
+y_pred = ridge.predict(X_test)
+
+# Calculate the mean squared error
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+Step 5: Evaluate the Model
+Finally, you can evaluate the model using the test data. Here, we have calculated the mean squared error, but you could also look at other metrics like R-squared, MAE, etc.
+
+Visualizing the Results
+To visually inspect how well our model performs, we can plot the predicted values against the actual values.
+
+python
+Copy code
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Prices")
+plt.ylabel("Predicted Prices")
+plt.title("Actual Prices vs Predicted Prices")
+plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red')  # Line for perfect predictions
+plt.show()
+This script covers the basic workflow in scikit-learn for scaling features, fitting a regression model, and evaluating its performance on the Boston housing dataset. Adjusting parameters like the regularization strength (alpha) in Ridge Regression can help in achieving better model performance.
+
+Get started with ChatGPT
+Report content
+|
+Terms of use
+|
+Privacy policy
+|
+
+?

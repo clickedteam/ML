@@ -193,3 +193,58 @@ model = tf.keras.applications.ResNet50(weights='imagenet')
 # If you only need to extract features without the classification layers:
 model_feature_extractor = tf.keras.applications.ResNet50(weights='imagenet', include_top=False)
 
+
+
+
+
+ import os
+import numpy as np
+from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
+from tensorflow.keras.preprocessing import image
+from sklearn.metrics.pairwise import cosine_similarity
+
+def load_and_preprocess_img(img_path):
+    """Load and preprocess an image."""
+    img = image.load_img(img_path, target_size=(224, 224))
+    img_array = image.img_to_array(img)
+    img_array_expanded = np.expand_dims(img_array, axis=0)
+    return preprocess_input(img_array_expanded)
+
+def extract_features(img_path, model):
+    """Extract features from an image using the provided model."""
+    processed_img = load_and_preprocess_img(img_path)
+    features = model.predict(processed_img)
+    return features
+
+def compare_images(base_img_path, folder_path):
+    """Compare base image with images in a folder and find the most similar one."""
+    # Load the pre-trained ResNet50 model
+    model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
+
+    # Extract features from the base image
+    base_img_features = extract_features(base_img_path, model)
+
+    # Initialize variables to store the best score and corresponding image path
+    best_score = -1
+    best_img_path = None
+
+    # Loop through all images in the folder
+    for img_name in os.listdir(folder_path):
+        img_path = os.path.join(folder_path, img_name)
+        img_features = extract_features(img_path, model)
+        
+        # Calculate cosine similarity and update the best score if the current score is higher
+        score = cosine_similarity(base_img_features, img_features)
+        if score > best_score:
+            best_score = score
+            best_img_path = img_path
+
+    return best_img_path, best_score
+
+# Usage
+base_image_path = 'path_to_your_query_image.jpg'
+images_folder = 'path_to_your_images_folder'
+best_match, similarity = compare_images(base_image_path, images_folder)
+print(f'Best match: {best_match} with similarity: {similarity}')
+
+

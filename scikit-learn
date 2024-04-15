@@ -184,3 +184,12 @@ img_preprocessed = preprocess_input(img_array_expanded)
 predictions = model.predict(img_preprocessed)
 decoded_predictions = decode_predictions(predictions, top=3)[0]
 print('Predictions:', decoded_predictions)
+
+import tensorflow as tf
+
+# Load the ResNet50 model pre-trained on ImageNet data
+model = tf.keras.applications.ResNet50(weights='imagenet')
+
+# If you only need to extract features without the classification layers:
+model_feature_extractor = tf.keras.applications.ResNet50(weights='imagenet', include_top=False)
+

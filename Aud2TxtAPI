@@ -1,0 +1,21 @@
+# app.py
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/upload-audio', methods=['POST'])
+def upload_audio():
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio file provided'}), 400
+
+    audio_file = request.files['audio']
+    if audio_file.filename == '':
+        return jsonify({'error': 'No audio file provided'}), 400
+
+    # Save the audio file to disk
+    audio_file.save('uploaded_audio.wav')
+
+    return jsonify({'message': 'Audio file uploaded successfully'}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)

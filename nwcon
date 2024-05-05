@@ -1,0 +1,30 @@
+if (navigator.connection) {
+  const connection = navigator.connection;
+
+  // Network type
+  console.log("Network type: " + connection.type);
+
+  // Effective connection type
+  console.log("Effective connection type: " + connection.effectiveType);
+
+  // Downlink speed (in Mbps)
+  console.log("Downlink speed: " + connection.downlink + " Mbps");
+
+  // Downlink max speed (in Mbps)
+  console.log("Downlink max speed: " + connection.downlinkMax + " Mbps");
+
+  // RTT (Round-Trip Time) (in ms)
+  console.log("Round-Trip Time (RTT): " + connection.rtt + " ms");
+
+  // SaveData flag
+  console.log("Data saver enabled: " + connection.saveData);
+
+  // Signal strength (Only supported in some browsers and devices)
+  if ('signalStrength' in connection) {
+    console.log("Signal strength: " + connection.signalStrength);
+  } else {
+    console.log("Signal strength not supported in this browser/device.");
+  }
+} else {
+  console.log("Navigator API not supported in this browser.");
+}

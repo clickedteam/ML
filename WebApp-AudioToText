@@ -149,3 +149,23 @@
 </body>
 </html>
 
+
+function uploadAudio(blob) {
+            let formData = new FormData();
+            formData.append('audio', blob, 'audio.wav');
+
+            fetch('/upload-audio', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                audioPlayback.src = url;
+                audioPlayback.play();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+

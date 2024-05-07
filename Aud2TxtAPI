@@ -19,3 +19,41 @@ def upload_audio():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+from pydub import AudioSegment
+import whisper
+
+def segment_audio(file_path, segment_duration_ms=30000):  # 30 seconds per segment
+    """Split the audio file into manageable segments."""
+    audio = AudioSegment.from_file(file_path)
+    length_audio = len(audio)
+    segments = []
+    for start in range(0, length_audio, segment_duration_ms):
+        end = start + segment_duration_ms
+        segment = audio[start:end]
+        segment_file_path = f"{file_path[:-4]}_segment_{start//1000}-{end//1000}.wav"
+        segment.export(segment_file_path, format="wav")
+        segments.append(segment_file_path)
+    return segments
+
+def transcribe_segments(segments):
+    """Transcribe each segment using Whisper and combine the results."""
+    model = whisper.load_model("base")
+    full_transcript = ""
+    for segment_path in segments:
+        result = model.transcribe(segment_path, verbose=True)
+        full_transcript += result['text'] + " "
+    return full_transcript.strip()
+
+def main():
+    file_path = 'path_to_your_long_audio_file.wav'
+    segments = segment_audio(file_path)
+    transcription = transcribe_segments(segments)
+    print("Complete Transcription:")
+    print(transcription)
+
+if __name__ == "__main__":
+    main()
